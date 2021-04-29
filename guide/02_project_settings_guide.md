@@ -97,8 +97,13 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 ```
-
-자, 이제 westagram 프로젝트를 위한 기본 설정이 완료 되었습니다. westagram을 위한 첫 앱을 생성해보세요! 회원가입, 로그인 등 회원을 관리할 앱을 생성하실 것이므로 앱 이름은 `user` 혹은 `account`를 추천드립니다.
+### 5. Append slash 경고 제거
+설정 파일 제일 아래에 다음 코드를 추가해주세요.
+```
+#REMOVE_APPEND_SLASH_WARNING
+APPEND_SLASH = False
+```
+자, 이제 westagram 프로젝트를 위한 기본 설정이 완료 되었습니다. westagram을 위한 첫 앱을 생성해보세요! 회원가입, 로그인 등 회원을 관리할 앱을 생성하실 것이므로 앱 이름은 `users` 혹은 `accounts`를 추천드립니다.
 
 어떻게 만들죠?
 
