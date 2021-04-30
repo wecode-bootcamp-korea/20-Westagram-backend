@@ -3,8 +3,8 @@
 
 ## 초기 세팅 및 진행 방법
 - 원하는 directory 이동 후 해당 repo를 clone 받아주세요.
-- main 브랜치를 기준으로 `feature/본인이름` 브랜치를 만들어주세요. (ex. `feature/kyunghun-kang`)
-    > 현업에서 브랜치는 본인의 이름으로 생성하지 않고, 기능 단위로 생성합니다. 실제 프로젝트에서는 브랜치를 자신의 이름으로 작성하지 않도록 주의해주세요.
+- main 브랜치를 기준으로 `feature/이름-구현중인기능` 브랜치를 만들어주세요. (ex. `feature/kyunghun-initail-seting`, `feature/kyunhun-signup`)
+    > 현업에서 브랜치에 본인 이름을 삽입하지 않고, 기능 단위로만 생성합니다. 실제 프로젝트에서는 브랜치에 자신의 이름을 작성하지 않도록 주의해주세요.
 - 새롭게 생성한 브랜치로 이동후 `students` 폴더에 본인 이름의 폴더를 만들어주세요. 
 (ex. `students` > `kyunghun-kang` 폴더 생성)
 - `$ django-admin startproject westagram .` 명령어로 Django 프로젝트를 생성해주세요.
