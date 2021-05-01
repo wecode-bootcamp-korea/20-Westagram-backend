@@ -2,11 +2,12 @@ import json ,re
 
 from django.http     import JsonResponse, HttpResponse
 from django.views    import View
-from django.core.exceptions import ValidationError
+
+#from django.core.exceptions import ValidationError
 
 from users.models import Users
 
-class SingUp(View):
+class SignUp(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
