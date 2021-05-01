@@ -2,6 +2,7 @@ import json
 
 from django.http  import JsonResponse
 from django.views import View
+from django.db    import IntegrityError
 
 from users.models import User
 
@@ -21,16 +22,15 @@ class SignUpView(View):
         elif len(data['password']) < 8:
             return JsonResponse({"MESSAGE": "PASSWORD ERROR"}, status=400)
 
-        elif (User.objects.filter(email=data.get('email')).exists() == True) or ((User.objects.filter(nickname=data.get('nickname')).exists() == True) and (User.objects.filter(nickname=data.get('nickname') != None))) or ((User.objects.filter(phone=data.get('phone')).exists() == True) and (User.objects.filter(phone=data.get('phone') != None))):
-            return JsonResponse({"MESSAGE": "ALREADY EXIST ERROR"}, status=400)
-
         else:
-            User.objects.create(
-                email    = data.get('email'),
-                password = data.get('password'),
-                nickname = data.get('nickname'),
-                phone    = data.get('phone')
-            )
-            return JsonResponse({'MESSAGE':'SIGNUP_SUCCESS'}, status=201)
-
-        
+            try:
+                User.objects.create(
+                    email    = data.get('email'),
+                    password = data.get('password'),
+                    nickname = data.get('nickname'),
+                    phone    = data.get('phone')
+                )
+                return JsonResponse({'MESSAGE':'SIGNUP SUCCESS'}, status=201)
+            
+            except IntegrityError:
+                return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
