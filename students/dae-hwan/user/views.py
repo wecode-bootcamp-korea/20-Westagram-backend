@@ -1,4 +1,5 @@
 import json 
+import re
 
 from django.http  import JsonResponse
 from django.views import View
@@ -12,8 +13,8 @@ class SignUpView(View):
         password            = data['password']
         nick_name           = data['nick_name']
         phone_number        = data['phone_number']
-        email_validation    = '^[a-z0-9,_-.]+@[a-z0-9,_-]+\.[a-z0-9,_-.]+$'
-        password_validation = '.{8,}'
+        email_validation    = re.compile( '^[a-z0-9]+@[a-z0-9]+\.[a-z0-9.]+$', re.I)
+        password_validation = re.compile('.{8,}')
 
         # 정보가 잘 입력되었을 때
         try: 
