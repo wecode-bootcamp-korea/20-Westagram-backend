@@ -7,11 +7,13 @@ from user.models  import User
 
 class SignUpView(View):
     def post(self, request):
-        data         = json.loads(request.body)
-        email        = data['email']
-        password     = data['password']
-        nick_name    = data['nick_name']
-        phone_number = data['phone_number']
+        data                = json.loads(request.body)
+        email               = data['email']
+        password            = data['password']
+        nick_name           = data['nick_name']
+        phone_number        = data['phone_number']
+        email_validation    = '^[a-z0-9,_-.]+@[a-z0-9,_-]+\.[a-z0-9,_-.]+$'
+        password_validation = '.{8,}'
 
         # 정보가 잘 입력되었을 때
         try: 
@@ -33,14 +35,15 @@ class SignUpView(View):
                 return JsonResponse({'message': 'phone_number exist'}, status = 400)
 
             # email이 중복되지 않을시 데이터 생성
-            if not User.objects.filter(email = email).exists():
-                User.objects.create(
-                        email        = email,
-                        password     = password,
-                        nick_name    = nick_name,
-                        phone_number = phone_number,
-                )
-                return JsonResponse({'message': 'SUCCESS'}, status = 201)
+            if User.objects.filter(email = email).exists():
+                return JsonResponse({'message': 'email exist'}, status = 400)
+            User.objects.create(
+                    email        = email,
+                    password     = password,
+                    nick_name    = nick_name,
+                    phone_number = phone_number,
+            )
+            return JsonResponse({'message': 'SUCCESS'}, status = 201)
 
         # 정보를 틀리게 입력했을 때
         except KeyError:
