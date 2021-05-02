@@ -15,7 +15,11 @@ class SignUpView(View):
             password            = data['password']
             nick_name           = data['nick_name']
             phone_number        = data['phone_number']
+
+            # 이메일은 @와 .을 필수로 포함
             email_validation    = re.compile( '^[a-z0-9]+@[a-z0-9]+\.[a-z0-9.]+$', re.I)
+
+            # 비밀번호의 최소자리수
             MIN_PASSWORD        = 8          
             password_validation = re.compile('.{%d,}' % (MIN_PASSWORD))
 
@@ -51,3 +55,15 @@ class SignUpView(View):
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
 
+class LogInView(View):
+    def post(self, request):
+        try:
+            data     = json.loads(request.body)
+            email    = data['email']
+            password = data['password']
+
+            if not User.objects.filter(email = email, password = password).exists():
+                return JsonResponse({'message': 'invalid user'}, status = 401)
+
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
