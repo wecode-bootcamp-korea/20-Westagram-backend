@@ -21,8 +21,10 @@ class SignUpView(View):
 
             if user_validation.check_required_fields(email, password):
                 return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+
             if user_validation.check_email(email):
                 return JsonResponse({'message': 'EMAIL_ERROR'}, status=400)
+
             if user_validation.check_password(password):
                 return JsonResponse({'message': 'PASSWORD_ERROR'}, status=400)
 
@@ -44,5 +46,5 @@ class SignUpView(View):
 
             return JsonResponse({'message': 'SUCCESS'}, status=201)
 
-        except JSONDecodeError as e:
+        except JSONDecodeError:
             return JsonResponse({'message': 'EMPTY_ARGS_ERROR'}, status=400)

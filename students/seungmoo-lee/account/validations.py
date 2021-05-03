@@ -10,5 +10,6 @@ class UserValidation:
         return email_pattern.match(email) is None
 
     def check_password(self, password):
-        password_pattern = re.compile('^([^ ]{8,}$)+')
+        PASSWORD_LENGTH = 8
+        password_pattern = re.compile('^([^ ]{%i,}$)+' % PASSWORD_LENGTH)
         return password_pattern.match(password) is None
