@@ -1,4 +1,4 @@
-import json ,re
+import json, re, bcrypt
 
 from django.http     import JsonResponse, HttpResponse
 from django.views    import View
@@ -21,12 +21,14 @@ class SignUp(View):
                 return JsonResponse({'MESSAGE':'Phone_number already exists'}, status=400)
             if Users.objects.filter(email=data['email']).exists():
                 return JsonResponse({'MESSAGE':'email already exists'}, status=400)
+            password = data['password']
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
             Users.objects.create(
                 name=data['name'],
                 phone_number=data['phone_number'],
                 nickname=data['nickname'],
                 age=data['age'],
-                password=data['password'],
+                password=hashed_password,
                 email=data['email'],
                 )
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
@@ -39,9 +41,12 @@ class LogIn(View):
         try:
             users = Users.objects.all()
             for user in users:
+                password = data['password']
+                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+                bcrypt.checkpw(password.encode('utf-8'),hashed_password)
                 if user.email != data['email']:
                     return JsonResponse({"message": "INVALID_USER"}, status=401)
-                if user.password != data['password']:
+                if hashed_password == False:
                     return JsonResponse({"message": "INVALID_USER"}, status=401)
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
         except KeyError:

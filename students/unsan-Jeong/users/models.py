@@ -5,7 +5,7 @@ class Users(models.Model):
     id = models.BigAutoField(primary_key= True)
     email = models.EmailField(max_length=64, verbose_name="user e-mail")
     name = models.CharField(max_length =32, verbose_name="use name")
-    password = models.CharField(max_length=32, verbose_name="password")
+    password = models.CharField(max_length=128, verbose_name="password")
     phone_number = models.CharField(max_length=11, verbose_name="phone number")
     nickname = models.CharField(max_length=32, verbose_name="nickname")
     age = models.IntegerField(null=True, blank=True)
