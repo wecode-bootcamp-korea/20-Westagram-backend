@@ -3,7 +3,8 @@ import json
 from django.http     import JsonResponse, HttpResponse
 from django.views    import View
 
-from postings.models import Postings
+from postings.models import Postings, Comments
+
 from users.models import Users
 
 class PostingsView(View):
@@ -11,9 +12,10 @@ class PostingsView(View):
         data = json.loads(request.body)
         users = Users.objects.all()
         for user in users:
-            if user.name == data['name']:
+            if user.name == data['user_name']:
                 Postings.objects.create(
-                    user_name=data['name'],
+                    name = data['name'],
+                    user_name=data['user_name'],
                     image_url=data['url'],
                     user=user
                 )
@@ -28,21 +30,18 @@ class CommentsView(View):
         data = json.loads(request.body)
         users = Users.objects.all()
         postings = Postings.objects.all()
-        comment = Comments.obejcts.create(
-            content = data['content']
-        )
         for user in users:
-            if user.name == data['user']:
-                comment.user.add(user.id)
-            else:
-                return JsonResponse({'MASSEGE':'Non-existent users'}, status =400)
-        for posting in postings:
-            if posting.name == data['posting']:
-                comment.post.add(posting.id)
-            else: 
-                return JsonResponse({'MASSEGE':'Non-existent posting'}, status =400)
-        return JsonResponse({'MASSEGE':"SUCCESS"}, status =2o0)
-
+            for posting in postings:
+                if (user.name == data['user_name']) and (posting.name == data['posting_name']):
+                    Comments.objects.create(
+                        content = data['content'],
+                        user = user,
+                        post = posting,
+                    )
+                    return JsonResponse({'MASSEGE':"SUCCESS"}, status =200)
+                else:
+                    return JsonResponse({'MASSEGE':'Fail'}, status =400)
+                
     def get(self, request):
         comments = Comments.objects.values()
         return JsonResponse({'Comments':list(comments)}, status = 200)
