@@ -20,7 +20,7 @@ class signupView(View):
     def post(self, request):
         data = json.loads(request.body)
 
-         try:
+        try:
             if not validate_email(data['email']):
                 return JsonResponse({'MESSAGE':'INVALID EMAIL'}, status=400)
             if not validate_password(data['password']):
@@ -33,7 +33,7 @@ class signupView(View):
                     nickname      = data['nickname']
                 )
         except:
-	    return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
+            return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
 
         return JsonResponse({'MESSAGE': 'SUCCESS'}, status=201)
 
@@ -45,13 +45,14 @@ class loginView(View):
         try:
             log_email    = data['email']
             log_password = data['password']
-            try:
-                email    = User.objects.get(user_email = log_email)
-                password = User.objects.get(user_password = log_password)
-            except:
-                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            email = User.objects.get(user_email = log_email)
+            
+            if email.user_password == log_password:
+                return JsonResponse({"message":"SUCCESS"}, status=200)
+            else:
+                return JsonResponse({"message":"INVALID_USER"}, status=401)
 
-        except:
+        except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
-
-        return JsonResponse({"message":"SUCCESS"}, status=200)
+        except:
+            return JsonResponse({'message':'INVALID_USER'}, status=401)
