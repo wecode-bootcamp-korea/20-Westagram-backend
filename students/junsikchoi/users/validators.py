@@ -13,9 +13,9 @@ def validate_email(email):
 
 
 def validate_password(password):
-    min_password_length = 8
+    MIN_PASSWORD_LENGTH = 8
 
-    if len(str(password)) < min_password_length:
+    if len(str(password)) < MIN_PASSWORD_LENGTH:
         raise ValidationError(
             "Your Password is too short. Use Longer Password."
         )
