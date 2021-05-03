@@ -38,10 +38,14 @@ class CommentsView(View):
                         user = user,
                         post = posting,
                     )
-                    return JsonResponse({'MASSEGE':"SUCCESS"}, status =200)
+                    return JsonResponse({'MASSEGE':"SUCCESS"}, status =201)
                 else:
                     return JsonResponse({'MASSEGE':'Fail'}, status =400)
                 
-    def get(self, request):
-        comments = Comments.objects.values()
+    def get(self, request, postings_id):
+        # data = json.loads(request.body)
+        # return data
+        # posting = Postings.object.get(id=num)
+        # comments = posting.comment.content
+        comments = Comments.objects.filter(post=postings_id).values()
         return JsonResponse({'Comments':list(comments)}, status = 200)
