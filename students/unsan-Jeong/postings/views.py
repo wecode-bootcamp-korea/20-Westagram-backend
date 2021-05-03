@@ -21,6 +21,7 @@ class PostingsView(View):
                 )
                 return JsonResponse({'MASSAGE':'SUCCESS'}, status = 201)
             return JsonResponse({'MASSAGE':'Non-existent users'}, status=400)
+    
     def get(self, request):
         postings = Postings.objects.values()
         return JsonResponse({'Postings':list(postings)}, status = 200)
