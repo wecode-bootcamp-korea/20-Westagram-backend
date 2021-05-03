@@ -1,20 +1,11 @@
 import json
-import re
 
 from django.http  import JsonResponse
 from django.views import View
 
-from user.models import User
+from user.models   import User
+from user.validate import *
 
-def validate_email(email):
-    regex = re.compile('^[a-z0-9+-_.]+@[a-z0-9-]+\.[a-z0-9-.]+$', re.I)
-    match = regex.match(str(email))
-    return bool(match)
-
-def validate_password(password):
-    regex = re.compile('^[a-z0-9_-]{8,16}$', re.I)
-    match = regex.match(str(password))
-    return bool(match)
 
 class signupView(View):
     def post(self, request):
@@ -22,9 +13,11 @@ class signupView(View):
 
         try:
             if not validate_email(data['email']):
-                return JsonResponse({'MESSAGE':'INVALID EMAIL'}, status=400)
+                return JsonResponse({'message':'INVALID EMAIL'}, status=400)
             if not validate_password(data['password']):
-                return JsonResponse({'MESSAGE':'INVALID PASSWORD'}, status=400) 
+                return JsonResponse({'message':'INVALID PASSWORD'}, status=400) 
+            if not duplicate_email(data['email']):
+                return JsonResponse({'message':'DUPLICATE EMAIL'}, status=409)
 
             User.objects.create(
                     email         = data['email'], 
@@ -32,10 +25,9 @@ class signupView(View):
                     phone_number  = data['phone_number'],
                     nickname      = data['nickname']
                 )
+            return JsonResponse({'message': 'SUCCESS'})
         except:
-            return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
-
-        return JsonResponse({'MESSAGE': 'SUCCESS'}, status=201)
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
 
 
 class loginView(View):
