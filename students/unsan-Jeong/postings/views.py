@@ -11,13 +11,14 @@ class PostingsView(View):
     def post(self, request):
         data = json.loads(request.body)
         users = Users.objects.all()
+        
         for user in users:
             if user.name == data['user_name']:
                 Postings.objects.create(
-                    name = data['name'],
-                    user_name=data['user_name'],
-                    image_url=data['url'],
-                    user=user
+                    name      = data['name'],
+                    user_name = data['user_name'],
+                    image_url = data['url'],
+                    user      = user
                 )
                 return JsonResponse({'MASSAGE':'SUCCESS'}, status = 201)
             return JsonResponse({'MASSAGE':'Non-existent users'}, status=400)
@@ -27,16 +28,18 @@ class PostingsView(View):
 
 class CommentsView(View):
     def post(self, request):
-        data = json.loads(request.body)
-        users = Users.objects.all()
+        data     = json.loads(request.body)
+        users    = Users.objects.all()
         postings = Postings.objects.all()
+        
         for user in users:
             for posting in postings:
+                
                 if (user.name == data['user_name']) and (posting.name == data['posting_name']):
                     Comments.objects.create(
                         content = data['content'],
-                        user = user,
-                        post = posting,
+                        user    = user,
+                        post    = posting,
                     )
                     return JsonResponse({'MASSEGE':"SUCCESS"}, status =201)
                 else:
