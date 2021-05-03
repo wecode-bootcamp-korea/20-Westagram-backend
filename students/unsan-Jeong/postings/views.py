@@ -22,3 +22,27 @@ class PostingsView(View):
     def get(self, request):
         postings = Postings.objects.values()
         return JsonResponse({'Postings':list(postings)}, status = 200)
+
+class CommentsView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        users = Users.objects.all()
+        postings = Postings.objects.all()
+        comment = Comments.obejcts.create(
+            content = data['content']
+        )
+        for user in users:
+            if user.name == data['user']:
+                comment.user.add(user.id)
+            else:
+                return JsonResponse({'MASSEGE':'Non-existent users'}, status =400)
+        for posting in postings:
+            if posting.name == data['posting']:
+                comment.post.add(posting.id)
+            else: 
+                return JsonResponse({'MASSEGE':'Non-existent posting'}, status =400)
+        return JsonResponse({'MASSEGE':"SUCCESS"}, status =2o0)
+
+    def get(self, request):
+        comments = Comments.objects.values()
+        return JsonResponse({'Comments':list(comments)}, status = 200)
