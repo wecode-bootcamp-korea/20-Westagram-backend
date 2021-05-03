@@ -13,27 +13,26 @@ class UserView(View):
         regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 
         try:
-            if not (re.search(regex, data['email'])):                   #이메일 형식 정규표현식 설정
+            if not (re.search(regex, data['email'])):                   
                 return JsonResponse({'SIGNUP':'BAD_REQUEST_KEY_ERROR'}, status=400)
-            if len(data['password']) < 8:                               #비밀번호 길이 수 제약
+            if len(data['password']) < 8:                               
                 return JsonResponse({'SIGNUP':'BAD_REQUEST_KEY_ERROR'}, status=400)
-            if users_info.filter(email=data['email']):                  #이메일 중복 방지
+            if users_info.filter(email=data['email']):                  
                 return JsonResponse({'SIGNUP':'USER_ALREADY_EXISTS'}, status=400)
-            if users_info.filter(username=data['username']):            #유저네임 중복 방지
+            if users_info.filter(username=data['username']):           
                 return JsonResponse({'SIGNUP':'USER_ALREADY_EXISTS'}, status=400)
-            if users_info.filter(mobile_num=data['mobile_num']):        #전화번호 중복 방지
+            if users_info.filter(mobile_num=data['mobile_num']):       
                 return JsonResponse({'SIGNUP':'USER_ALREADY_EXISTS'}, status=400) 
                   
             else:                                   
-                user = User.objects.create(                             #정상 입력시 회원가입 및 sql에 데이터 저장
+                user = User.objects.create(                            
                     email           = data['email'],
                     password        = data['password'],
                     mobile_num      = data['mobile_num'],
                     username        = data['username'],
                 )
-
         except KeyError:
             return JsonResponse({'SIGNUP':'BAD_REQUEST_KEY_ERROR'}, status=400)
-            
+
         else:
             return JsonResponse({'SIGNUP':'SUCCESS'}, status=201)
