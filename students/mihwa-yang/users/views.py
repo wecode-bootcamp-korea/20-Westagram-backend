@@ -23,7 +23,7 @@ class SignUpView(View):
         if User.objects.filter(email=data.get('email')).exists() == True \
             or User.objects.filter(nickname=data.get('nickname')).exists() == True \
             or User.objects.filter(phone=data.get('phone')).exists() == True:
-                return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
+            return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
             
         else:
             User.objects.create(
