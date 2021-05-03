@@ -1,4 +1,4 @@
-import json
+import json, re
 
 from django.http     import JsonResponse
 from django.views    import View
@@ -51,12 +51,14 @@ class UserView(View):
             return None
 
     def validate_email(self, mail):
-        if '@' not in mail or '.' not in mail:
+        regex = re.compile('[a-zA-Z0-9\.\_\+\-]+\@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\.]+')
+        if not regex.match(mail):
             raise EmailFormatError
         return
 
     def validate_password(self, password):
-        if len(password) < 8:
+        regex = re.compile('[A-Za-z0-9]{8,}')
+        if not regex.match(password):
             raise PasswordError
         return
 
