@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 from django.db import IntegrityError
 from django.views import View
 from django.http import JsonResponse
@@ -23,8 +24,8 @@ class SignUpView(View):
         # Response with KEY_ERROR if required key is not contained in the post request
         try:
             req = json.loads(request.body)
-        except:
-            return JsonResponse({"message": "KEY_ERROR"}, status=400)
+        except JSONDecodeError as e:
+            return JsonResponse({"message": e.msg}, status=400)
         else:
             for required_field in self.required_fields:
                 if required_field not in req.keys():
