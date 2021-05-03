@@ -1,1 +1,47 @@
+import json
+import re
 
+from django.http  import JsonResponse
+from django.views import View
+
+from user.models import User
+
+class signupView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+         try:
+            if not validate_email(data['email']):
+                return JsonResponse({'MESSAGE':'INVALID EMAIL'}, status=400)
+            if not validate_password(data['password']):
+                return JsonResponse({'MESSAGE':'INVALID PASSWORD'}, status=400) 
+
+            User.objects.create(
+                    user_email    = data['email'], 
+                    user_password = data['password'],
+                    phone_number  = data['phone_number'],
+                    nickname      = data['nickname']
+                )
+        except:
+	    return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
+
+        return JsonResponse({'MESSAGE': 'SUCCESS'}, status=201)
+
+
+class loginView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        try:
+            log_email    = data['email']
+            log_password = data['password']
+            try:
+                email    = User.objects.get(user_email = log_email)
+                password = User.objects.get(user_password = log_password)
+            except:
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
+
+        except:
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
+
+        return JsonResponse({"message":"SUCCESS"}, status=200)
