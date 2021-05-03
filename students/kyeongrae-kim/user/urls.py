@@ -1,6 +1,6 @@
-from django.urls import path
-from user.views import UsersView
+from django.urls    import path
+from user.views     import UserView
 
 urlpatterns = [
-    path('user', UsersView.as_view()),
+    path('', UserView.as_view()),
     ]

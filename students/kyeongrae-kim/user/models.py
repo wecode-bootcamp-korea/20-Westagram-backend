@@ -1,6 +1,4 @@
-from django.db import models
-
-# Create your models here.
+from django.db  import models
 
 class User(models.Model):
     mobile_num = models.CharField(max_length=255)
@@ -12,10 +10,3 @@ class User(models.Model):
 
     class Meta:
         db_table = 'users'
-
-
-
-
-
-
-
