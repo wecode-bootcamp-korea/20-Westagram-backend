@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-from my_settings import DATABASES, SECRET
+from my_settings import SECRET, DATABASES
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,23 +32,22 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-#    'django.contrib.admin',
-#    'django.contrib.auth',
+    #'django.contrib.admin',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'postings',
-    'user',
+    'users'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
-#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -79,6 +78,7 @@ WSGI_APPLICATION = 'westagram.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = DATABASES
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators

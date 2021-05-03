@@ -1,21 +1,15 @@
 from django.db import models
 
-from user.models import User
-
-class Posting(models.Model):
-    user      = models.ForeignKey('User', on_delete = models.CASCADE)
-    content   = models.CharField(max_length = 100)
-    like      = models.IntegerField(default = 0)
-    create_at = models.DateTimeField(auto_now_add = True)
-    update_at = models.DateTimeFIeld(auto_now = True)
+class User(models.Model):
+    email        = models.CharField(max_length=254)
+    password     = models.CharField(max_length=254) 
+    nick_name    = models.CharField(max_length=45, null = True)
+    phone_number = models.CharField(max_length=45, null=True)
+    create_at    = models.DateTimeField(auto_now_add=True)
+    update_at    = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'postings'
+        db_table = 'users'
 
     def __str__(self):
-        return self.user
-
-class Image(models.Model):
-    user      = models.ForeignKey('Posting', on_delete = models.CASCADE)
-    
-
+        return self.nick_name

@@ -32,23 +32,21 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-#    'django.contrib.admin',
-#    'django.contrib.auth',
+    #'django.contrib.admin',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'postings',
-    'user',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
-#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.middleware.common.CommonMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -79,6 +77,7 @@ WSGI_APPLICATION = 'westagram.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = DATABASES
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -123,12 +122,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#REMOVE_APPEND_SLASH_WARNING
-APPEND_SLASH = False
 
 ##CORS
 CORS_ORIGIN_ALLOW_ALL=True
-CORS_ALLOW_CREDENTIALS=True
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = (
     'DELETE',
@@ -149,5 +146,4 @@ CORS_ALLOW_HEADERS = (
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-		#만약 허용해야할 추가적인 헤더키가 있다면?(사용자정의 키) 여기에 추가하면 됩니다.
 )
