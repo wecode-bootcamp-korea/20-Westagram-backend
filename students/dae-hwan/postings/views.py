@@ -25,4 +25,17 @@ class PostingView(View):
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
 
-
+    def get(self, request):
+        results = []
+        posts = Posting.objects.all()
+        for post in posts:
+            posting_information = {
+                    'email'    : post.user.email,
+                    'nick_name': post.user.nick_name,
+                    'content'  : post.content,
+                    'image_url': post.image_url,
+                    'create_at': post.create_at,
+                    'update_at': post.update_at,
+                }
+            results.append(posting_information)
+        return JsonResponse({'results': results}, status = 200)
