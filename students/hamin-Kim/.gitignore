@@ -1,8 +1,10 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,macos,linux,zsh
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vscode,vim,macos,linux,zsh
+# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,linux,macos,windows,zsh
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vscode,vim,linux,macos,windows,zsh
 
 my_settings.py
 *.csv
+
+
 
 ### Linux ###
 *~
@@ -328,6 +330,31 @@ tags
 !.vscode/extensions.json
 *.code-workspace
 
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
 ### Zsh ###
 # Zsh compiled script + zrecompile backup
 *.zwc
@@ -358,6 +385,4 @@ zsdoc/data
 /tests/_output/*
 !/tests/_output/.gitkeep
 
-<<<<<<< HEAD
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,macos,linux,zsh
->>>>>>> feature/unsan-user-signup
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,linux,macos,windows,zsh
