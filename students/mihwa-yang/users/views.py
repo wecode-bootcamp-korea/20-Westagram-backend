@@ -16,8 +16,8 @@ class SignUpView(View):
         if data['email'].count('@') == 0 or data['email'].count('.') == 0:
             return JsonResponse({"MESSAGE": "EMAIL FORM ERROR"}, status=400)
         
-        password_length = len(data['password'])
-        if password_length < 8:
+        PASSWORD_LENGTH = 8 
+        if len(data['password']) < PASSWORD_LENGTH:
             return JsonResponse({"MESSAGE": "PASSWORD ERROR"}, status=400)
 
         else:
