@@ -5,8 +5,8 @@ from django.http.response import JsonResponse
 from django.views         import View
 from django.db.models     import Q
 
-from .models                    import User
-from .validations               import UserValidation
+from .models              import User
+from .validations         import UserValidation
 
 class SignUpView(View):
     def post(self, request):
