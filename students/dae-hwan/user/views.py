@@ -12,7 +12,6 @@ class LogInView(View):
             email    = data['email']
             password = data['password']
 
-            # 이메일이나 비밀번호가 일치하지 않을 때
             if not User.objects.filter(email = email, password = password).exists():
                 return JsonResponse({'message': 'invalid user'}, status = 401)
 
