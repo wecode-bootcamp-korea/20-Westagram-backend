@@ -32,3 +32,19 @@ class SignUpView(View):
 
             except IntegrityError:
                 return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
+
+
+class SignInView(View): 
+    def post(self, request):
+        data  = json.loads(request.body)
+
+        if 'password' not in data.keys() or 'email' not in data.keys():
+            return JsonResponse({"MESSAGE": "KEY ERROR"}, status=400)
+
+        if User.objects.filter(email=data['email']).exists() == False \
+            or data['password'] != User.objects.get(email=data['email']).password:
+            return JsonResponse({"MESSAGE": "INVALID USER"}, status=401)
+        
+        if User.objects.filter(email=data['email'], password=data['password']).exists() == True:
+            return JsonResponse({"MESSAGE": "SUCCESS"}, status=200)
+
