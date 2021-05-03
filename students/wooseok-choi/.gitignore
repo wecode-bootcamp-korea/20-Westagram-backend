@@ -1,8 +1,9 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,macos,linux,zsh
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vscode,vim,macos,linux,zsh
-
 my_settings.py
 *.csv
+
+
+# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,linux,macos,windows
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vscode,linux,macos,windows
 
 ### Linux ###
 *~
@@ -300,26 +301,6 @@ Thumbs.db
 .prof
 
 
-### Vim ###
-# Swap
-[._]*.s[a-v][a-z]
-!*.svg  # comment out if you don't need vector files
-[._]*.sw[a-p]
-[._]s[a-rt-v][a-z]
-[._]ss[a-gi-z]
-[._]sw[a-p]
-
-# Session
-Session.vim
-Sessionx.vim
-
-# Temporary
-.netrwhist
-# Auto-generated tag files
-tags
-# Persistent undo
-[._]*.un~
-
 ### vscode ###
 .vscode/*
 !.vscode/settings.json
@@ -328,35 +309,29 @@ tags
 !.vscode/extensions.json
 *.code-workspace
 
-### Zsh ###
-# Zsh compiled script + zrecompile backup
-*.zwc
-*.zwc.old
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
 
-# Zsh completion-optimization dumpfile
-*zcompdump*
+# Dump file
+*.stackdump
 
-# Zsh zcalc history
-.zcalc_history
+# Folder config file
+[Dd]esktop.ini
 
-# A popular plugin manager's files
-._zinit
-.zinit_lstupd
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
 
-# zdharma/zshelldoc tool's files
-zsdoc/data
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
 
-# robbyrussell/oh-my-zsh/plugins/per-directory-history plugin's files
-# (when set-up to store the history in the local directory)
-.directory_history
+# Windows shortcuts
+*.lnk
 
-# MichaelAquilina/zsh-autoswitch-virtualenv plugin's files
-# (for Zsh plugins using Python)
-.venv
-
-# Zunit tests' output
-/tests/_output/*
-!/tests/_output/.gitkeep
-
-<<<<<<< HEAD
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,macos,linux,zsh
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,linux,macos,windows

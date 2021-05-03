@@ -1,23 +1,6 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,macos,linux,zsh
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vscode,vim,macos,linux,zsh
 
-my_settings.py
-*.csv
-
-### Linux ###
-*~
-
-# temporary files which can be created if a process still has a handle open of a deleted file
-.fuse_hidden*
-
-# KDE directory preferences
-.directory
-
-# Linux trash folder which might appear on any partition or disk
-.Trash-*
-
-# .nfs files are created when an open file is removed but is still being accessed
-.nfs*
+# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,macos,vscode,vim,zsh
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,macos,vscode,vim,zsh
 
 ### macOS ###
 # General
@@ -315,6 +298,7 @@ Sessionx.vim
 
 # Temporary
 .netrwhist
+*~
 # Auto-generated tag files
 tags
 # Persistent undo
@@ -358,5 +342,6 @@ zsdoc/data
 /tests/_output/*
 !/tests/_output/.gitkeep
 
-<<<<<<< HEAD
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,vim,macos,linux,zsh
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,macos,vscode,vim,zsh
+
+my_settings.py
