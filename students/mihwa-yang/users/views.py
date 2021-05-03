@@ -20,15 +20,16 @@ class SignUpView(View):
         if len(data['password']) < PASSWORD_LENGTH:
             return JsonResponse({"MESSAGE": "PASSWORD ERROR"}, status=400)
 
-        else:
-            try:
-                User.objects.create(
-                    email    = data.get('email'),
-                    password = data.get('password'),
-                    nickname = data.get('nickname'),
-                    phone    = data.get('phone')
-                )
-                return JsonResponse({'MESSAGE':'SIGNUP SUCCESS'}, status=201)
-
-            except IntegrityError:
+        if User.objects.filter(email=data.get('email')).exists() == True \
+            or User.objects.filter(nickname=data.get('nickname')).exists() == True \
+            or User.objects.filter(phone=data.get('phone')).exists() == True:
                 return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
+            
+        else:
+            User.objects.create(
+                email    = data.get('email'),
+                password = data.get('password'),
+                nickname = data.get('nickname'),
+                phone    = data.get('phone')
+            )
+            return JsonResponse({'MESSAGE':'SIGNUP SUCCESS'}, status=201)
