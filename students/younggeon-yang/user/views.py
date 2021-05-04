@@ -43,35 +43,33 @@ class UserView(View):
             return JsonResponse({'message': e.error_message+e.whaterror}, status=400)
         return JsonResponse({'message': 'SUCCESS'}, status=201)    
 
+
 class LoginView(View):
     def post(self, request):
-        # 패스워드 키가 전달되지 않았을 시 에러
         try:
-            data = json.loads(request.body)
-            password = data['password']   
+            data     = json.loads(request.body)
+            password = data['password']
+       
+            email    = data.get('email', None)
+            phone    = data.get('phone', None)
+            nickname = data.get('nickname', None)
+
+            if email:
+                password_db = User.objects.filter(email=email)[0].password
+            elif phone:
+                password_db = User.objects.filter(phone=phone)[0].password
+            elif nickname:
+                password_db = User.objects.filter(nickname=nickname)[0].password
+            else:
+                return JsonResponse({'message': 'No input account'}, status=400)
+
+            if password != password_db:
+                return JsonResponse({'message': 'Wrong password'}, status=401)
+
         except JSONDecodeError:
             return JsonResponse({'message': 'No input data'}, status=400)
         except KeyError:
             return JsonResponse({'message': 'No input password'}, status=400)
-        
-        # 계정(이메일or번호or닉네임)이 전달되지 않았을 시 에러
-        account_types = ('email', 'phone', 'nickname')
-        user_account = {}
-        for account_type in account_types:
-            if account_type in data:
-                user_account[account_type] = data[account_type]
-                break
-        if not user_account:
-            return JsonResponse({'message': 'No input account'}, status=400)
-
-        # 모르는 키가 들어왔을 때 에러
-        keywords = ('email', 'password', 'phone', 'nickname')
-        for keyword in data:
-            if keyword not in keywords:
-                return JsonResponse({'message': 'Unknown keyword in request'}, status=400)
-
-        # 계정 확인
-#        user = User.objects.filter(
-
+        except IndexError:
+            return JsonResponse({'message': 'Wrong account name'}, status=401)
         return JsonResponse({'message': 'SUCCESS'}, status=200)
-
