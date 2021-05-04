@@ -18,4 +18,5 @@ from django.urls.conf import include
 
 urlpatterns = [
     path('user', include('account.urls')),
+    path('board', include('board.urls')),
 ]
