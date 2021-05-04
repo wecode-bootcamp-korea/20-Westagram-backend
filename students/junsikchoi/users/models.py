@@ -20,14 +20,14 @@ class User(models.Model):
         "user nickname",
         max_length=50,
         unique=True,
-        blank=True,
+        null=True,
     )
 
     phone_number = models.CharField(
         "user phone number",
         max_length=17,
         unique=True,
-        blank=True,
+        null=True,
     )
 
     class Meta:
