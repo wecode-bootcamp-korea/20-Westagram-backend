@@ -13,11 +13,11 @@ class SignupView(View):
             if not validate_email(data['email']):
                 return JsonResponse({'MASSAGE':'INVALID EMAIL'}, status=400)    
             
-            required_pw_digits = 8
-            if not len(data['password']) >= required_pw_digits:
+            REQUIRED_LENGTH = 8
+            if not len(data['password']) >= REQUIRED_LENGTH:
                 return JsonResponse({'MASSAGE':'INVALID PASSWORD'}, status=400)
 
-            if not User.objects.filter(email = data['email']).exists():
+            if User.objects.filter(email = data['email']).exists():
                 return JsonResponse({'MASSAGE':'DUPLICATED EMAIL'}, status=400)
 
             signup_users = User.objects.create(
