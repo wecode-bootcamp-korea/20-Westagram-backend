@@ -30,10 +30,10 @@ class SignUpView(View):
 
             # Create User Data
             user = User.objects.create(
-                email = data['email'],
-                password = data['password'],
-                username = data['username'],
-                phone_number = data['phone_number'],
+                email = data.get('email'),
+                password = data.get('password'),
+                username = data.get('username'),
+                phone_number = data.get('phone_number'),
             )
 
         except JSONDecodeError as e:
