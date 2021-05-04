@@ -9,60 +9,58 @@ from users.validators import (
     validate_email,
     validate_password,
 )
+from utils import check_duplicate, DuplicatedEntryError
 
 class SignUpView(View):
     # Limit HTTP methods to POST
     http_method_names = ["post"]
 
-    # Store Model Fields (Required, non-required)
-    required_fields = [_.attname for _ in User._meta.get_fields() if _.blank == False and _.attname != 'id']
-
-    non_required_fields = [_.attname for _ in User._meta.get_fields() if _.blank == True and _.attname != 'id']
-
     def post(self, request):
 
-        # Response with KEY_ERROR if required key is not contained in the post request
         try:
-            req = json.loads(request.body)
+            # load data from request body
+            data = json.loads(request.body)
+
+            # Validate Email and Password
+            validate_email(data["email"])
+            validate_password(data["password"])
+
+            # Check if unique field duplicated
+            check_duplicate(User, data)
+
+            # Create User Data
+            user = User.objects.create(
+                email = data['email'],
+                password = data['password'],
+                username = data['username'],
+                phone_number = data['phone_number'],
+            )
+
         except JSONDecodeError as e:
             return JsonResponse({"message": e.msg}, status=400)
-        else:
-            for required_field in self.required_fields:
-                if required_field not in req.keys():
-                    return JsonResponse(
-                        {"message": "KEY_ERROR"},
-                        status=400,
-                    )
-
-        # Validate Email and Password
-        try:
-            validate_email(req["email"])
-            validate_password(req["password"])
 
         except ValidationError as e:
             return JsonResponse({"message": e.message}, status=400)
 
-        # Get provided column names which are contained both in req.body and model fields
-        column_names = list(
-            set(req.keys()) 
-            & 
-            set([*self.required_fields,*self.non_required_fields]))
+        except KeyError as e:
+            return JsonResponse({"message": "KEY_ERROR"}, status=400)
 
-        data = {k: req[k] for k in column_names}
+        except DuplicatedEntryError as e:
+            return JsonResponse({"message": e.err_message}, status=409)
 
-        try:
-            user = User.objects.create(**data)
         except IntegrityError as e:
             return JsonResponse(
                 {
-                    "message": "DUPLICATED_USER_INFO: {}".format(str(e.__cause__)),
+                    "message": "DataBase Integrity Error: {}".format(str(e.__cause__)),
                 },
-                status=409,
+                status=500,
             )
+
         else:
             return JsonResponse(
                 {
                     "message": "SUCCESS",
                     "user": user.to_dict(),
-                }
+                },
+                status=200
             )
