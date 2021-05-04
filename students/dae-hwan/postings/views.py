@@ -64,4 +64,15 @@ class CommentView(View):
         except KeyError:
             JsonResponse({'message': 'KEY_ERROR'}, status = 400)
                     
-            
+    def get(self, request):
+        results = []
+        comments = Comment.objects.all()
+        for comment in comments:
+            comment_information = {
+                    'posting cotent': comment.posting.content,
+                    'user email'    : comment.user.email,
+                    'comments'      : comment.comments,
+            }
+            results.append(comment_information)
+        return JsonResponse({'results': results}, status = 200)
+
