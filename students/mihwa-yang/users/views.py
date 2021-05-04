@@ -2,13 +2,13 @@ import json
 
 from django.http  import JsonResponse
 from django.views import View
-from django.db    import IntegrityError
 
 from users.models import User
 
 class SignUpView(View): 
     def post(self, request):
         data  = json.loads(request.body)
+        nickname = data.get('nickname')
 
         if 'password' not in data.keys() or 'email' not in data.keys():
             return JsonResponse({"MESSAGE": "KEY ERROR"}, status=400)
@@ -20,12 +20,16 @@ class SignUpView(View):
         if len(data['password']) < PASSWORD_LENGTH:
             return JsonResponse({"MESSAGE": "PASSWORD ERROR"}, status=400)
 
-        if User.objects.filter(email=data.get('email')).exists() \
-            or (User.objects.filter(nickname=data.get('nickname')).exists() \
-                and User.objects.filter(nickname=data.get('nickname') != None)) \
-                    or (User.objects.filter(phone=data.get('phone')).exists() \
-                        and User.objects.filter(phone=data.get('phone') != None)):
-                        return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
+        if User.objects.filter(email=data.get('email')).exists():
+            return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
+
+        if User.objects.filter(nickname=data.get('nickname')).exists() \
+            and User.objects.filter(nickname=data.get('nickname') is not None):
+            return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
+
+        if User.objects.filter(phone=data.get('phone')).exists() \
+            and User.objects.filter(phone=data.get('phone') is not None):
+            return JsonResponse({"MESSAGE": "ALREADY EXIT ERROR"}, status=400)
             
         User.objects.create(
             email    = data.get('email'),
