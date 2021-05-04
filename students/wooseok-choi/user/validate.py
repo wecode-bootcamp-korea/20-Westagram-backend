@@ -12,9 +12,3 @@ def validate_password(password):
     match = regex.match(str(password))
     return bool(match)
 
-def duplicate_email(email):
-    try:
-        User.objects.get(email = email)
-        return False
-    except:
-        return True
