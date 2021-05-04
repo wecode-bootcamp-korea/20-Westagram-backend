@@ -36,6 +36,7 @@ class PostView(View):
 
         for post in post_list:
             result.append({
+                'post_id': post.id,
                 'user': post.user.email,
                 'image_url': post.image_url,
                 'created_at': post.created_at,
