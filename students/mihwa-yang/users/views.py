@@ -8,7 +8,6 @@ from users.models import User
 class SignUpView(View): 
     def post(self, request):
         data  = json.loads(request.body)
-        nickname = data.get('nickname')
 
         if 'password' not in data.keys() or 'email' not in data.keys():
             return JsonResponse({"MESSAGE": "KEY ERROR"}, status=400)
