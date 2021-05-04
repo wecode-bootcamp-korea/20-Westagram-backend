@@ -3,21 +3,23 @@ import json
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError
-from user.models            import SignUp
-from user.validators        import validate_email, validate_password, duplicated_email
+from user.models            import User
+from user.validators        import validate_email
 
-class SignUpView(View):
+class SignupView(View):
     def post(self, request):
         data    = json.loads(request.body)
         try:
             if not validate_email(data['email']):
                 return JsonResponse({'MASSAGE':'INVALID EMAIL'}, status=400)    
-            if not validate_password(data['password']):
-                return JsonResponse({'MASSAGE':'Password must be at least 8 digits'}, status=400)
-            if not duplicated_email(data['email']):
+            
+            if not len(data['password']) >= 8:
+                return JsonResponse({'MASSAGE':'INVALID PASSWORD'}, status=400)
+
+            if not User.objects.filter(email = data['email']):
                 return JsonResponse({'MASSAGE':'DUPLICATED EMAIL'}, status=400)
 
-            signup_user = SignUp.objects.create(
+            signup_users = User.objects.create(
                 password     = data['password'],
                 email        = data['email'],
                 name         = data['name'],
