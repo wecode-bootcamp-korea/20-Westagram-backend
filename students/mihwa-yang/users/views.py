@@ -38,3 +38,20 @@ class SignUpView(View):
             phone    = data.get('phone')
         )
         return JsonResponse({'MESSAGE':'SIGNUP SUCCESS'}, status=201)
+
+
+class SignInView(View): 
+    def post(self, request):
+        data  = json.loads(request.body)
+
+        if 'email' not in data.keys() or 'password' not in data.keys():
+            return JsonResponse({"MESSAGE": "KEY ERROR"}, status=400)
+
+        if User.objects.filter(email=data['email']).exists() == False:
+            return JsonResponse({"MESSAGE": "INVALID USER"}, status=401)
+
+        if data['password'] != User.objects.get(email=data['email']).password:
+            return JsonResponse({"MESSAGE": "INVALID USER"}, status=401)
+        
+        if User.objects.filter(email=data['email'], password=data['password']).exists():
+            return JsonResponse({"MESSAGE": "SUCCESS"}, status=200)
