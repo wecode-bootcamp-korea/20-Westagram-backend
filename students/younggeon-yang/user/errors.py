@@ -1,10 +1,10 @@
 class EmailFormatError(Exception):
-    error_message = "Email format is invalid"
+    error_message = "Email format invalid"
     def __init__(self):
         super().__init__(EmailFormatError.error_message)
 
 class PasswordError(Exception):
-    error_message = "Password is too short"
+    error_message = "Password too short"
     def __init__(self):
         super().__init__(EmailFormatError.error_message)
 
