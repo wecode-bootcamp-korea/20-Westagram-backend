@@ -18,8 +18,8 @@ class SignUpView(View):
                 return JsonResponse({"MESSAGE" : "INVALID_PASSWORD"}, status = 400)
 
             if Users.objects.filter(email = data["email"]).exists()\
-                    or Users.objects.filter(nickname = data["nickname"])\
-                    or Users.objects.filter(phonenumber = data["phonenumber"]):
+                    or Users.objects.filter(nickname = data["nickname"]).exists()\
+                    or Users.objects.filter(phonenumber = data["phonenumber"]).exists():
                 return JsonResponse({"MESSAGE" : "ALREADY_EXIT"}, status = 400)
 
             Users.objects.create(
@@ -32,16 +32,3 @@ class SignUpView(View):
 
         except KeyError:
             return JsonResponse({"MESSAGE" : "KEY_ERROR"}, status = 400)
-
-
-
-
-
-
-
-
-
-
-
-
-
