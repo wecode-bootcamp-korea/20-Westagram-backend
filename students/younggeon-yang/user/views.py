@@ -1,9 +1,12 @@
-import json, re
+import json
+from json.decoder     import JSONDecodeError
 
-from django.http     import JsonResponse
-from django.views    import View
+from django.http      import JsonResponse
+from django.views     import View
 
-from user.models import User
+from user.models      import User
+from user.validations import Validation
+from user             import errors
 
 class UserView(View):
     def post(self, request):
@@ -14,6 +17,8 @@ class UserView(View):
             password = data['password']
         except KeyError:
             return JsonResponse({'message': 'Cannot find required email or password'}, status=400)
+        except JSONDecodeError:
+            return JsonResponse({'message': 'No input data'}, status=400)
 
         # 모르는 키가 들어왔을 때 에러
         for keyword in data:
@@ -26,65 +31,31 @@ class UserView(View):
         
         # 3 Validations: email, password, duplication
         try:
-            self.validate_email(email)
-            self.validate_password(password)
-            self.validate_duplication(email, phone, nickname)
-        except EmailFormatError as e:
+            Validation.validate_email(self, email)
+            Validation.validate_password(self, password)
+            Validation.validate_duplication(self, email, phone, nickname)
+        except errors.EmailFormatError as e:
             return JsonResponse({'message': e.error_message}, status=400)
-        except PasswordError as e:
+        except errors.PasswordError as e:
             return JsonResponse({'message': e.error_message}, status=400)
-        except DuplicationError as e:
+        except errors.DuplicationError as e:
             return JsonResponse({'message': e.error_message+e.whaterror}, status=400)
         
         # Input data to database
         User.objects.create(email=email, password=password, phone=phone, nickname=nickname)
-
+        
+        # Show SUCCESS message
         return JsonResponse({'message': 'SUCCESS'}, status=201)    
-
 
     def save_keyword(self, keyword, data):
         try:
-            if not data[keyword]:  # ""가 입력되면 None이 되도록 한다.
-                return None
-            return data[keyword]
-        except KeyError:  # 입력값이 없어도 None이 되도록 한다.
-            return None
+            if data[keyword]: 
+                return data[keyword] 
+            return None  # input이 ''이면 None이 되도록 한다.
+        except KeyError: 
+            return None  # 입력값이 없어도 None이 되도록 한다. 
 
-    def validate_email(self, mail):
-        regex = re.compile('[a-zA-Z0-9\.\_\+\-]+\@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\.]+')
-        if not regex.match(mail):
-            raise EmailFormatError
-        return
-
-    def validate_password(self, password):
-        regex = re.compile('[A-Za-z0-9]{8,}')
-        if not regex.match(password):
-            raise PasswordError
-        return
-
-    def validate_duplication(self, email, phone, nickname):
-        if User.objects.filter(email=email):
-            raise DuplicationError("email")
-        elif phone and User.objects.filter(phone=phone):  # phone이 None인 경우에는 exception을 피할 수 있다.
-            raise DuplicationError("phone")
-        elif nickname and User.objects.filter(nickname=nickname):
-            raise DuplicationError("nickname")    
-        return
-
-    
-class EmailFormatError(Exception):
-    error_message = "Email format is invalid"
-    def __init__(self):
-        super().__init__(EmailFormatError.error_message)
-
-class PasswordError(Exception):
-    error_message = "Password is too short"
-    def __init__(self):
-        super().__init__(EmailFormatError.error_message)
-
-class DuplicationError(Exception):
-    error_message = "Duplicated user info: "
-    def __init__(self, whaterror):
-        self.whaterror = whaterror
-        super().__init__(EmailFormatError.error_message+whaterror)
+class LoginView(View):
+    def post(self, request):
+        return JsonResponse({'message': 'OK'}, status=200)
 
