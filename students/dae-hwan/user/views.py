@@ -72,15 +72,3 @@ class SignUpView(View):
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
 
-class TokenCheckView(View):
-    def post(self, request):
-        data  = json.loads(request.body)
-        token = data['token']
-
-        user_token_info = jwt.decode(token.encode('utf-8'), SECRET, ALGORITHM)
-
-        if User.objects.filter(id = user_token_info['user_id']).exists():
-            return HttpResponse(status = 200)
-        
-        return HttpResponse(status = 403)
-

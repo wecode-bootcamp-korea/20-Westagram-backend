@@ -8,7 +8,7 @@ from postings.models import Posting, Comment
 from user.models     import User
 
 class PostingView(View):
-    #@login_required
+    @login_required
     def post(self, request):
         data = json.loads(request.body)
         try:
@@ -77,4 +77,3 @@ class CommentView(View):
             }
             results.append(comment_information)
         return JsonResponse({'results': results}, status = 200)
-:
