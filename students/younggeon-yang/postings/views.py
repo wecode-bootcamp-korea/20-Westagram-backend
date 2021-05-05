@@ -17,13 +17,12 @@ class PostView(View):
             user_id = data['user_id']
 
             Post.objects.create(
-                    img_url=img_url, 
+                    img_url=img_url,
                     text=text, 
                     user=User.objects.get(id=user_id)
             )
 
             return JsonResponse({'message': 'SUCCESS'}, status=201)
-
         except JSONDecodeError:
             return JsonResponse({'message': 'No body'}, status=400)
         except KeyError:
