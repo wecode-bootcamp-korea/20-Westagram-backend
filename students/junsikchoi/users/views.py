@@ -29,23 +29,16 @@ class SignUpView(View):
                 phone_number = data.get('phone_number'),
             )
 
+            return JsonResponse({ "result": "SUCCESS", "user": user.to_dict()}, status=200)
+
         except JSONDecodeError as e:
-            return JsonResponse({"message": e.msg}, status=400)
+            return JsonResponse({"result": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
 
         except ValidationError as e:
-            return JsonResponse({"message": e.message}, status=400)
+            return JsonResponse({"result": "INVALID_DATA_ERROR", "message": e.message}, status=400)
 
         except KeyError as e:
-            return JsonResponse({"message": "KEY_ERROR"}, status=400)
+            return JsonResponse({"result": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
 
         except DuplicatedEntryError as e:
-            return JsonResponse({"message": e.err_message}, status=409)
-
-        else:
-            return JsonResponse(
-                {
-                    "message": "SUCCESS",
-                    "user": user.to_dict(),
-                },
-                status=200
-            )
+            return JsonResponse({"result": "DUPLICATED_ENTRY", "message": e.err_message}, status=409)
