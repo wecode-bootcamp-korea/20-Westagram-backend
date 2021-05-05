@@ -21,8 +21,10 @@ class SignUpView(View):
 
             if not Validation.validate_email(self, email):
                 return JsonResponse({'message': 'Error email'}, status=400)
+
             if not Validation.validate_password(self, password):
                 return JsonResponse({'message': 'Error password'}, status=400)
+
             if not Validation.validate_duplication(self, email, phone, nickname):
                 return JsonResponse({'message': 'Already exist'}, status=400)
 
