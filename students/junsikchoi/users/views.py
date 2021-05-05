@@ -1,15 +1,14 @@
 import json
-from json import JSONDecodeError
-from django.db import IntegrityError
-from django.views import View
-from django.http import JsonResponse
+from json                   import JSONDecodeError
+
+from django.db              import IntegrityError
+from django.views           import View
+from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
-from users.models import User
-from users.validators import (
-    validate_email,
-    validate_password,
-)
-from utils import check_duplicate, DuplicatedEntryError
+
+from users.models           import User
+from users.validators       import validate_email, validate_password
+from utils                  import check_duplicate, DuplicatedEntryError
 
 class SignUpView(View):
 
