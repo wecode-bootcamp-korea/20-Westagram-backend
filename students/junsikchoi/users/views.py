@@ -9,7 +9,7 @@ from users.validators import (
     validate_email,
     validate_password,
 )
-from utils import check_duplicate, DuplicatedEntryError
+from utils import check_duplicate, DuplicatedEntryError, AuthenticationError
 
 class SignUpView(View):
     # Limit HTTP methods to POST
@@ -64,3 +64,39 @@ class SignUpView(View):
                 },
                 status=200
             )
+
+class SignInView(View):
+    # Limit Http Method to POST
+    http_method_names = ["post"]
+
+    def post(self, request):
+        
+        try:
+            # loads data from request body
+            data = json.loads(request.body)
+
+            # access required fields
+            email = data['email']
+            password = data['password']
+
+            # check if user exists
+            user = User.objects.get(email=email)
+
+            # check if password matches
+            if user.password != str(password):
+                raise AuthenticationError
+
+        except JSONDecodeError as e:
+            return JsonResponse({"message": e.msg}, status=400)
+        
+        except KeyError:
+            return JsonResponse({"message": "KEY_ERROR"}, status=400)
+        
+        except User.DoesNotExist:
+            return JsonResponse({"message": "INVALID_USER"}, status=401)
+
+        except AuthenticationError:
+            return JsonResponse({"message": "INVALID_USER"}, status=401)
+
+        else:
+            return JsonResponse({"message": "SUCCESS"}, status=200)
