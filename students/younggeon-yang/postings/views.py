@@ -64,8 +64,10 @@ class CommentView(View):
     def get(self, request):
         results = {}
         posts = Post.objects.all()
-#        for post in posts:
-#            results[post.id] = 
+        for post in posts:
+            result = {}
+            result['
+            results[post.id] = 
 
 
 
