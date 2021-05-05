@@ -15,7 +15,7 @@ class SignupViews(View):
                 return JsonResponse({'MESSAGE' : 'KEY_ERROR'}, status = 400) 
 
             if User.objects.filter(phone_number=data.get['phone_number']).exist() \
-                 and User.objects.filter(nickname=data.get['phone_number']) != None):
+                 and User.objects.filter(phone_number=data.get['phone_number']) != None):
                 return JsonResponse({'MESSAGE': 'ALREADY_EXISTS'}, status = 400)
 
             if User.objects.filter(nickname=data.get['nickname']).exist() \
