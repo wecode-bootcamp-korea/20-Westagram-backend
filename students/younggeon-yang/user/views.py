@@ -27,20 +27,12 @@ class SignUpView(View):
                 return JsonResponse({'message': 'Already exist'}, status=400)
 
             User.objects.create(email=email, password=password, phone=phone, nickname=nickname)
-<<<<<<< HEAD
 
-        except KeyError:  # 이메일이나 패스워드 키가 전달되지 않았을 시 에러
-            return JsonResponse({'message': 'No email or password'}, status=400)
-        except JSONDecodeError:  # Input keyword가 아예 없을 때
-            return JsonResponse({'message': 'No input data'}, status=400)
-        except errors.EmailFormatError as e:
-            return JsonResponse({'message': e.error_message}, status=400)
-        except errors.PasswordError as e:
-            return JsonResponse({'message': e.error_message}, status=400)
-        except errors.DuplicationError as e:
-            return JsonResponse({'message': e.error_message+e.whaterror}, status=400)
-        return JsonResponse({'message': 'SUCCESS'}, status=201)    
-
+            return JsonResponse({'message': 'SUCCESS'}, status=201)
+        except KeyError:
+            return JsonResponse({'message': 'No keyword'}, status=400)
+        except JSONDecodeError:
+            return JsonResponse({'message': 'No body'}, status=400)
 
 class LoginView(View):
     def post(self, request):
@@ -53,30 +45,21 @@ class LoginView(View):
             nickname = data.get('nickname', None)
 
             if email:
-                password_db = User.objects.filter(email=email)[0].password
+                password_db = User.objects.filter(email=email).first().password
             elif phone:
-                password_db = User.objects.filter(phone=phone)[0].password
+                password_db = User.objects.filter(phone=phone).first().password
             elif nickname:
-                password_db = User.objects.filter(nickname=nickname)[0].password
+                password_db = User.objects.filter(nickname=nickname).first().password
             else:
-                return JsonResponse({'message': 'No input account'}, status=400)
-
+                return JsonResponse({'message': 'No account input'}, status=400)
+            
             if password != password_db:
                 return JsonResponse({'message': 'Wrong password'}, status=401)
 
-        except JSONDecodeError:
-            return JsonResponse({'message': 'No input data'}, status=400)
-        except KeyError:
-            return JsonResponse({'message': 'No input password'}, status=400)
-        except IndexError:
-            return JsonResponse({'message': 'Wrong account name'}, status=401)
-        return JsonResponse({'message': 'SUCCESS'}, status=200)
-=======
-            
-            return JsonResponse({'message': 'SUCCESS'}, status=201)
+            return JsonResponse({'message': 'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message': 'No keyword'}, status=400)
         except JSONDecodeError:
             return JsonResponse({'message': 'No body'}, status=400)
-
->>>>>>> feature/younggeon-signin
+        except AttributeError:
+            return JsonResponse({'message': 'No account name'}, status=401)
