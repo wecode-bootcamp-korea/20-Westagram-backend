@@ -45,18 +45,18 @@ class UserView(View):
 
 class SigninView(View):
     def post(self, request):
-	 data=json.loads(request.body)
-	
-	 signin_email   = data['email']
-	 signin_password= data['password']
+        data=json.loads(request.body)
+	    
+        signin_email    = data['email']
+        signin_password = data['password']
 
-	 if not signin_email and not signin_password:
-            return JsonResponse({"messege":"KEYERROR"}, status=400)
+        if not signin_email and not signin_password:
+        	return JsonResponse({"messege":"KEYERROR"}, status=400)
        
-	 if not USER.objects.filter(email=signin_email).exist() :
-            return JsonResponse({'messege":"INVALID_EMAIL'}, status=400)
+        if not USER.objects.filter(email=signin_email).exists() :
+        	return JsonResponse({'messege":"INVALID_EMAIL'}, status=400)
        
-	 if not USER.objects.get(email=signin_email).password == signin_password:
+        if not USER.objects.get(email=signin_email).password == signin_password:
             return JsonResponse({"messege":"INVALID_PASSWORD"}, status=400)
 	
-	 return JsonResponse({"messege":"SUCCESS"}, status=200)       
+        return JsonResponse({"messege":"SUCCESS"}, status=200)       
