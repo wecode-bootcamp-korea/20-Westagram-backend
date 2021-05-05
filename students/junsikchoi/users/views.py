@@ -42,14 +42,6 @@ class SignUpView(View):
         except DuplicatedEntryError as e:
             return JsonResponse({"message": e.err_message}, status=409)
 
-        except IntegrityError as e:
-            return JsonResponse(
-                {
-                    "message": "DataBase Integrity Error: {}".format(str(e.__cause__)),
-                },
-                status=500,
-            )
-
         else:
             return JsonResponse(
                 {
