@@ -43,10 +43,10 @@ class LogIn(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
-            if users = Users.objects.fliter(email=data['email']).exists() is None:
+            if not Users.objects.fliter(email=data['email']).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
         
-            if users = Users.objects.fliter(password=data['password']).exists() is None:
+            if not Users.objects.fliter(password=data['password']).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
             
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
