@@ -6,7 +6,7 @@ import jwt
 from django.http   import JsonResponse, HttpResponse
 from django.views  import View
 
-from my_settings   import SECRET
+from my_settings   import SECRET, ALGORITHM
 from user.models   import User
 
 class LogInView(View):
@@ -20,7 +20,7 @@ class LogInView(View):
                 user = User.objects.get(email = email)
 
                 if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                    token = jwt.encode({'user_id': user.id}, SECRET, algorithm = 'HS256')
+                    token = jwt.encode({'user_id': user.id}, SECRET, ALGORITHM)
 
                     return JsonResponse({'token': token}, status = 200)
 
@@ -75,9 +75,9 @@ class SignUpView(View):
 class TokenCheckView(View):
     def post(self, request):
         data  = json.loads(request.body)
-        token = data['token'] 
+        token = data['token']
 
-        user_token_info = jwt.decode(token, SECRET, algorithem = 'HS256')
+        user_token_info = jwt.decode(token.encode('utf-8'), SECRET, ALGORITHM)
 
         if User.objects.filter(id = user_token_info['user_id']).exists():
             return HttpResponse(status = 200)

@@ -8,7 +8,7 @@ from postings.models import Posting
 from user.models     import User
 
 class PostingView(View):
-    @login_required
+    #@login_required
     def post(self, request):
         data = json.loads(request.body)
         try:
