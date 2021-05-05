@@ -12,8 +12,6 @@ from users.validators import (
 from utils import check_duplicate, DuplicatedEntryError
 
 class SignUpView(View):
-    # Limit HTTP methods to POST
-    http_method_names = ["post"]
 
     def post(self, request):
 
