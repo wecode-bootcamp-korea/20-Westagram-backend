@@ -35,7 +35,7 @@ class SignupViews(View):
                 nickname      = nickname,
                 phone_number  = phone_number
             )
-            return JsonResponse({'Message' : 'SUCCESS'}, status = 201)
+                return JsonResponse({'Message' : 'SUCCESS'}, status = 201)
    
         except KeyError:
-            return JsonResponse({'MESSAGE' : 'KEYERROR'}, status=400)
+                return JsonResponse({'MESSAGE' : 'KEYERROR'}, status = 400)
