@@ -1,8 +1,9 @@
 import json
 import re
 import bcrypt
+import jwt
 
-from django.http   import JsonResponse
+from django.http   import JsonResponse, HttpResponse
 from django.views  import View
 
 from my_settings   import SECRET
@@ -19,7 +20,9 @@ class LogInView(View):
                 user = User.objects.get(email = email)
 
                 if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                    return JsonResponse({'message': 'SUCCESS'}, status = 200)
+                    token = jwt.encode({'user_id': user.id}, SECRET, algorithm = 'HS256')
+
+                    return JsonResponse({'token': token}, status = 200)
 
             return JsonResponse({'message': 'invalid user'}, status = 401)
 
@@ -49,10 +52,10 @@ class SignUpView(View):
             db_password     = hashed_password.decode('utf-8')
 
         
-            if nick_name != None and User.objects.filter(nick_name = nick_name).exists():
+            if nick_name != '' and User.objects.filter(nick_name = nick_name).exists():
                 return JsonResponse({'message': 'existing nick_name'}, status = 400)
 
-            if phone_number != None and User.objects.filter(phone_number = phone_number).exists():
+            if phone_number != '' and User.objects.filter(phone_number = phone_number).exists():
                 return JsonResponse({'message': 'existing phone_number'}, status = 400)
 
             if User.objects.filter(email = email).exists():
@@ -68,3 +71,16 @@ class SignUpView(View):
 
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
+
+class TokenCheckView(View):
+    def post(self, request):
+        data  = json.loads(request.body)
+        token = data['token'] 
+
+        user_token_info = jwt.decode(token, SECRET, algorithem = 'HS256')
+
+        if User.objects.filter(id = user_token_info['user_id']).exists():
+            return HttpResponse(status = 200)
+        
+        return HttpResponse(status = 403)
+
