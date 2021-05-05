@@ -16,17 +16,13 @@ class SignUpView(View):
     def post(self, request):
 
         try:
-            # load data from request body
             data = json.loads(request.body)
 
-            # Validate Email and Password
             validate_email(data["email"])
             validate_password(data["password"])
-
-            # Check if unique field duplicated
+            
             check_duplicate(User, data)
 
-            # Create User Data
             user = User.objects.create(
                 email = data.get('email'),
                 password = data.get('password'),
