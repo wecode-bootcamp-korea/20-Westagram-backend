@@ -1,4 +1,4 @@
-from django.db import models
+from django.db           import models
 from django.forms.models import model_to_dict
 
 
@@ -39,6 +39,5 @@ class User(models.Model):
 
     def to_dict(self):
         model_dict = model_to_dict(self)
-        # Prevent User Password Leaking
         model_dict.pop("password")
         return model_dict
