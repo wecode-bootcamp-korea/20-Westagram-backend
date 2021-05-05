@@ -1,9 +1,11 @@
 import json
 import re
+import bcrypt
 
 from django.http   import JsonResponse
 from django.views  import View
 
+from my_settings   import SECRET
 from user.models   import User
 
 class LogInView(View):
@@ -13,10 +15,13 @@ class LogInView(View):
             email    = data['email']
             password = data['password']
 
-            if not User.objects.filter(email = email, password = password).exists():
-                return JsonResponse({'message': 'invalid user'}, status = 401)
+            if User.objects.filter(email = email).exists():
+                user = User.objects.get(email = email)
 
-            return JsonResponse({'message': 'SUCCESS'}, status = 200)
+                if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                    return JsonResponse({'message': 'SUCCESS'}, status = 200)
+
+            return JsonResponse({'message': 'invalid user'}, status = 401)
 
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
@@ -38,6 +43,11 @@ class SignUpView(View):
             
             if not password_validation.match(password):
                 return JsonResponse({'message': 'invalid password'}, status = 400)
+            
+            byted_password  = password.encode('utf-8')
+            hashed_password = bcrypt.hashpw(byted_password, bcrypt.gensalt())
+            db_password     = hashed_password.decode('utf-8')
+
         
             if nick_name != None and User.objects.filter(nick_name = nick_name).exists():
                 return JsonResponse({'message': 'existing nick_name'}, status = 400)
@@ -50,7 +60,7 @@ class SignUpView(View):
             
             User.objects.create(
                     email        = email,
-                    password     = password,
+                    password     = db_password,
                     nick_name    = data.get('nick_name'),
                     phone_number = data.get('phone_number'),
             )
