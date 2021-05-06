@@ -1,6 +1,8 @@
 import json
-from json                   import JSONDecodeError
+import time
 import bcrypt
+import jwt
+from json                   import JSONDecodeError
 
 from django.db              import IntegrityError
 from django.views           import View
@@ -10,6 +12,7 @@ from django.core.exceptions import ValidationError
 from users.models           import User
 from users.validators       import validate_email, validate_password
 from utils                  import check_duplicate, DuplicatedEntryError, AuthenticationError
+from my_settings            import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_DURATION_SEC
 
 class SignUpView(View):
 
@@ -51,21 +54,40 @@ class SignInView(View):
     def post(self, request):
         
         try:
-            data = json.loads(request.body)
+            if request.headers.get('Authorization'):
+                token = request.headers.get('Authorization')
+                payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
+                user = User.objects.get(pk=payload.get('user_id'))
             
-            email = data['email']
-            password = data['password']
+            else:
+                data = json.loads(request.body)
 
-            user = User.objects.get(email=email)
+                email = data['email']
+                password = data['password']
 
-            if not bcrypt.checkpw(data.get('password').encode('utf-8'),user.password.encode('utf-8')):
-                return JsonResponse({"result": "INVALID_USER"}, status=401)
+                user = User.objects.get(email=email)
 
-            return JsonResponse({"result": "SUCCESS"}, status=200)
+                if not bcrypt.checkpw(data.get('password').encode('utf-8'),user.password.encode('utf-8')):
+                    return JsonResponse({"result": "INVALID_USER"}, status=401)
+
+            new_token = jwt.encode({'user_id': user.id, 'iat': int(time.time()), 'exp': int(time.time()) + JWT_DURATION_SEC}, 
+                                JWT_SECRET_KEY, 
+                                JWT_ALGORITHM)
+
+            return JsonResponse({"result": "SUCCESS", "token": new_token}, status=200)
 
         except JSONDecodeError as e:
             return JsonResponse({"result": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
         
+        except jwt.exceptions.ExpiredSignatureError as e:
+            return JsonResponse({"result": "TOKEN_ERROR", "message": e.args[0]})
+        
+        except jwt.exceptions.InvalidSignatureError as e:
+            return JsonResponse({"result": "TOKEN_ERROR", "message": e.args[0]})
+        
+        except jwt.exceptions.DecodeError as e:
+            return JsonResponse({"result": "TOKEN_ERROR", "message": e.args[0]})
+
         except KeyError as e:
             return JsonResponse({"result": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
         
