@@ -11,12 +11,14 @@ def check_duplicate(model, data):
     non_duplicatable_fields = [
         _.attname
         for _ in model._meta.get_fields()
-        if _.unique == True
+        if _.unique
     ]
 
     for field in non_duplicatable_fields:
+
         if field in data.keys():
             field_to_check = {field: data[field]}
+            
             if model.objects.filter(**field_to_check).exists():
                 raise DuplicatedEntryError(field)
 
