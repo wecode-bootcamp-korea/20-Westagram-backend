@@ -67,6 +67,7 @@ class LogIn(View):
     def get(self, request):
         users = Users.objects.all()
         result = []
+        
         for user in users:
             result.append(
                 {
