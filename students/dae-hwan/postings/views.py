@@ -12,35 +12,24 @@ class PostingView(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
-            email = data['email']
-
-            if not User.objects.filter(email = email).exists():
-                return JsonResponse({'MESSAGE': 'invalid user'}, status = 401)
+            user      = request.user
+            content   = data['content']
+            image_url = data.get('image_url')
 
             Posting.objects.create(
-                user      = User.objects.get(email = email),
-                content   = data['content'] ,
-                image_url = data['image_url'],
+                user      = request.user,
+                content   = content,
+                image_url = image_url,
             )
             return JsonResponse({'message': 'SUCCESS'}, status  = 200)
 
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
 
+    @login_required
     def get(self, request):
-        results = []
-        posts = Posting.objects.all()
-        for post in posts:
-            posting_information = {
-                    'email'    : post.user.email,
-                    'nick_name': post.user.nick_name,
-                    'content'  : post.content,
-                    'image_url': post.image_url,
-                    'create_at': post.create_at,
-                    'update_at': post.update_at,
-                }
-            results.append(posting_information)
-        return JsonResponse({'results': results}, status = 200)
+        posting_data = Posting.objects.values()
+        return JsonResponse({'posting_list': list(posting_data)}, status = 200)
 
 class CommentView(View):
     def post(self, request):
