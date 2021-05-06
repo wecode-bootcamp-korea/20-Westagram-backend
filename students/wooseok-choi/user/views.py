@@ -3,10 +3,10 @@ import bcrypt
 import jwt
 
 from westagram.settings import SECRET_KEY, ALGORITHM
-from django.http  import JsonResponse
-from django.views import View
+from django.http        import JsonResponse
+from django.views       import View
 
-from user.models import User
+from user.models   import User
 from user.validate import validate_email, validate_password
 
 class SignupView(View):

@@ -2,11 +2,11 @@ import jwt
 import json
 import requests
 
-from django.http import JsonResponse
+from django.http            import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 from westagram.settings import SECRET_KEY, ALGORITHM
-from user.models import User
+from user.models        import User
 
 def log_permission(func):
     def wrapper(self, request, *args, **kwargs):
