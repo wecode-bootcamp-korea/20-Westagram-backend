@@ -62,16 +62,34 @@ class CommentView(View):
         return JsonResponse({'message': 'SUCCESS'}, status=201)
 
     def get(self, request):
-        results = {}
-        posts = Post.objects.all()
-        for post in posts:
+        results = []
+        comments = Comment.objects.all()
+        for comment in comments:
             result = {}
-            result['
-            results[post.id] = 
+            result['post_id']     = comment.post_id
+            result['user_id']     = comment.user_id
+            result['text']        = comment.text
+            result['time_create'] = comment.time_create
+            results.append(result)
 
+        return JsonResponse({'message': results}, status=200)
 
+class CommentDetailView(View):
+    def get(self, request, post_id):
+        results = []
+        
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return JsonResponse({'message': 'No post_id'}, status=400)
 
-
-
+        comments = Comment.objects.filter(post_id=post_id)
+        for comment in comments:
+            result = {}
+            result['post_id']     = comment.post_id
+            result['user_id']     = comment.user_id
+            result['text']        = comment.text
+            result['time_create'] = comment.time_create
+            results.append(result)
 
         return JsonResponse({'message': results}, status=200)
