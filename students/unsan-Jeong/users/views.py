@@ -1,21 +1,21 @@
-import json ,re
+import json, re, bcrypt, jwt
 
 from django.http     import JsonResponse, HttpResponse
 from django.views    import View
 
-#from django.core.exceptions import ValidationError
+from my_settings import SECRET_KEY
 
 from users.models import Users
 
 class SignUp(View):
     def post(self, request):
-        data = json.loads(request.body)
-        password_length = 8
+        data           = json.loads(request.body)
+        PASSWORD_LENGTH = 8
         try:
-            if len(data['password']) < password_length:
+            if len(data['password']) < PASSWORD_LENGTH:
                 return JsonResponse({'MESSAGE':'password of at least eight characters'}, status=404)
             
-            if (re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', data['email']) == None):
+            if (re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', data['email']) is None):
                 return JsonResponse({'MESSAGE':'Invalid email'}, status=400)
             
             if Users.objects.filter(name=data['name']).exists():
@@ -27,15 +27,20 @@ class SignUp(View):
             if Users.objects.filter(email=data['email']).exists():
                 return JsonResponse({'MESSAGE':'email already exists'}, status=400)
             
+            password        = data['password']
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
             Users.objects.create(
-                name         = data['name'],
-                phone_number = data['phone_number'],
-                nickname     = data['nickname'],
-                age          = data['age'],
-                password     = data['password'],
-                email        = data['email'],
+                name        = data['name'],
+                phone_number= data['phone_number'],
+                nickname    = data['nickname'],
+                age         = data['age'],
+                password    = password,
+                email       = data['email'],
                 )
+                
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
+
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
 
@@ -43,16 +48,23 @@ class LogIn(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
-            users = Users.objects.all()
-            for user in users:
-                if user.email != data['email']:
-                    return JsonResponse({"message": "INVALID_USER"}, status=401)
-                
-                if user.password != data['password']:
-                    return JsonResponse({"message": "INVALID_USER"}, status=401)
-            return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
+            password        = data['password']
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+            if Users.objects.filter(email=data['email']).exists() is None:
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+        
+            if Users.objects.filter(password=hashed_password).exists() is None:
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+
+            data = {'user_id':Users.objects.get(email = data['email']).id}
+            access_token = jwt.encode(data, SECRET_KEY, algorithm = 'HS256')
+            return JsonResponse({'token':access_token}, status=201)
+
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
+
+
     def get(self, request):
         users = Users.objects.all()
         result = []
@@ -64,7 +76,3 @@ class LogIn(View):
                 }
             )
         return JsonResponse({'users_results':result}, status=200)
-
-        # if Users.objects.filter(email=data['account'], password=data['password']).exists():
-        #         return JsonResponse({'MESSAGE':'SUCCESS'}, status=200)
-        #     return JsonResponse({"MESSAGE": "INVALID_USER"}, status=401)
