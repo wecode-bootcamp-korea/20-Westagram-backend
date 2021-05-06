@@ -1,9 +1,9 @@
-import json ,re
+import json, re, bcrypt, jwt
 
 from django.http     import JsonResponse, HttpResponse
 from django.views    import View
 
-#from django.core.exceptions import ValidationError
+from my_settings import SECRET_KEY
 
 from users.models import Users
 
@@ -27,15 +27,19 @@ class SignUp(View):
             if Users.objects.filter(email=data['email']).exists():
                 return JsonResponse({'MESSAGE':'email already exists'}, status=400)
             
+            password        = data['password']
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
             Users.objects.create(
                 name        = data['name'],
                 phone_number= data['phone_number'],
                 nickname    = data['nickname'],
                 age         = data['age'],
-                password    = data['password'],
+                password    = password,
                 email       = data['email'],
                 )
             return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
+
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
 
@@ -43,13 +47,19 @@ class LogIn(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
-            if not Users.objects.fliter(email=data['email']).exists():
+            password        = data['password']
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+            if Users.objects.filter(email=data['email']).exists() is None:
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
         
-            if not Users.objects.fliter(password=data['password']).exists():
+            if Users.objects.filter(password=hashed_password).exists() is None:
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
-            
-            return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
+
+            data = {'user_id':Users.objects.get(email = data['email']).id}
+            access_token = jwt.encode(data, SECRET_KEY, algorithm = 'HS256')
+            return JsonResponse({'token':access_token}, status=201)
+
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
 
