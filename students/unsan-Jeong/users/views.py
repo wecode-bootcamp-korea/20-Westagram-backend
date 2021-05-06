@@ -10,9 +10,9 @@ from users.models import Users
 class SignUp(View):
     def post(self, request):
         data           = json.loads(request.body)
-        passwod_length = 8
+        PASSWORD_LENGTH = 8
         try:
-            if len(data['password']) < passwod_length:
+            if len(data['password']) < PASSWORD_LENGTH:
                 return JsonResponse({'MESSAGE':'password of at least eight characters'}, status=404)
             
             if (re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', data['email']) is None):
