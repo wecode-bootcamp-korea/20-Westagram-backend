@@ -1,10 +1,10 @@
 from django.db import models
 
 class Users(models.Model):
-    email        = models.EmailField(max_length=64)
+    email        = models.EmailField(max_length=128)
     name         = models.CharField(max_length =32)
-    password     = models.CharField(max_length=32)
-    phone_number = models.CharField(max_length=11)
+    password     = models.CharField(max_length=128)
+    phone_number = models.CharField(max_length=32)
     nickname     = models.CharField(max_length=32)
     age          = models.IntegerField(null=True, blank=True)
     create_at    = models.DateTimeField(auto_now_add=True)
