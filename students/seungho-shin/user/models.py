@@ -1,4 +1,4 @@
-from django.db                     import models
+from django.db   import models
 
 from phone_field import PhoneField
 
@@ -8,7 +8,7 @@ class User(models.Model):
         nick_name    = models.CharField(max_length=45, unique=True)
         password     = models.CharField(max_length=100)
         email        = models.CharField(max_length=45, unique=True)
-        phone_number = PhoneField(max_length=45, unique=True)
+        phone_number = models.CharField(max_length=11, unique=True)
 
         class Meta:
             db_table = 'users'
