@@ -12,7 +12,7 @@ class User(models.Model):
     )
     password = models.CharField(
         "user password",
-        max_length=50,
+        max_length=65,
         blank=False,
     )
 
