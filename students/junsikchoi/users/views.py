@@ -26,7 +26,7 @@ class SignUpView(View):
             
             check_duplicate(User, data)
 
-            hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            hashed_password = bcrypt.hashpw(str(data.get('password')).encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             user = User.objects.create(
                 email = data.get('email'),
@@ -67,7 +67,7 @@ class SignInView(View):
 
                 user = User.objects.get(email=email)
 
-                if not bcrypt.checkpw(data.get('password').encode('utf-8'),user.password.encode('utf-8')):
+                if not bcrypt.checkpw(str(data.get('password')).encode('utf-8'),user.password.encode('utf-8')):
                     return JsonResponse({"result": "INVALID_USER"}, status=401)
 
             new_token = jwt.encode({'user_id': user.id, 'iat': int(time.time()), 'exp': int(time.time()) + JWT_DURATION_SEC}, 
