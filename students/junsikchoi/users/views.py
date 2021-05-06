@@ -1,5 +1,6 @@
 import json
 from json                   import JSONDecodeError
+import bcrypt
 
 from django.db              import IntegrityError
 from django.views           import View
@@ -22,9 +23,11 @@ class SignUpView(View):
             
             check_duplicate(User, data)
 
+            hashed_password = bcrypt.hashpw(data.get('password').encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             user = User.objects.create(
                 email = data.get('email'),
-                password = data.get('password'),
+                password = hashed_password,
                 username = data.get('username'),
                 phone_number = data.get('phone_number'),
             )
@@ -49,13 +52,13 @@ class SignInView(View):
         
         try:
             data = json.loads(request.body)
-
+            
             email = data['email']
             password = data['password']
 
             user = User.objects.get(email=email)
 
-            if user.password != str(password):
+            if not bcrypt.checkpw(data.get('password').encode('utf-8'),user.password.encode('utf-8')):
                 return JsonResponse({"result": "INVALID_USER"}, status=401)
 
             return JsonResponse({"result": "SUCCESS"}, status=200)
