@@ -1,11 +1,11 @@
-import json, re, bcrypt
+import json, re, bcrypt, jwt
 
 from django.http     import JsonResponse, HttpResponse
 from django.views    import View
 
-#from django.core.exceptions import ValidationError
-
 from users.models import Users
+from postings.auth import LoginRequired
+from my_settings import SECRET
 
 class SignUp(View):
     def post(self, request):
@@ -27,7 +27,7 @@ class SignUp(View):
                 return JsonResponse({'MESSAGE':'email already exists'}, status=400)
             
             password        = data['password']
-            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             Users.objects.create(
                 name         = data['name'],
                 phone_number = data['phone_number'],
@@ -48,15 +48,16 @@ class LogIn(View):
             for user in users:
                 password        = data['password']
                 hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-                bcrypt.checkpw(password.encode('utf-8'),hashed_password)
                 
-                if user.email != data['email']:
+                if not Users.objects.filter(email=data['email']).exists():
                     return JsonResponse({"message": "INVALID_USER"}, status=401)
                 
-                if hashed_password == False:
+                if not bcrypt.checkpw(password.encode('utf-8'), hashed_password):
                     return JsonResponse({"message": "INVALID_USER"}, status=401)
-            
-            return JsonResponse({'MESSAGE':'SUCCESS'}, status=201)
+
+            data = {'user_id':Users.objects.get(email = data['email']).id}
+            access_token = jwt.encode(data, SECRET, algorithm = 'HS256')
+            return JsonResponse({'MESSAGE':'SUCCESS', 'token':access_token}, status=201)
         
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY_ERROR'}, status=400)
