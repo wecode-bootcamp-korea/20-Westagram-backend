@@ -35,19 +35,19 @@ class SignUpView(View):
                 phone_number = data.get('phone_number'),
             )
 
-            return JsonResponse({ "result": "SUCCESS", "user": user.to_dict()}, status=200)
+            return JsonResponse({ "status": "SUCCESS", "user": user.to_dict()}, status=200)
 
         except JSONDecodeError as e:
-            return JsonResponse({"result": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
+            return JsonResponse({"status": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
 
         except ValidationError as e:
-            return JsonResponse({"result": "INVALID_DATA_ERROR", "message": e.message}, status=400)
+            return JsonResponse({"status": "INVALID_DATA_ERROR", "message": e.message}, status=400)
 
         except KeyError as e:
-            return JsonResponse({"result": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
+            return JsonResponse({"status": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
 
         except DuplicatedEntryError as e:
-            return JsonResponse({"result": "DUPLICATED_ENTRY", "message": e.err_message}, status=409)
+            return JsonResponse({"status": "DUPLICATED_ENTRY", "message": e.err_message}, status=409)
 
 class SignInView(View):
 
@@ -68,28 +68,28 @@ class SignInView(View):
                 user = User.objects.get(email=email)
 
                 if not bcrypt.checkpw(str(data.get('password')).encode('utf-8'),user.password.encode('utf-8')):
-                    return JsonResponse({"result": "INVALID_USER"}, status=401)
+                    return JsonResponse({"status": "INVALID_USER"}, status=401)
 
             new_token = jwt.encode({'user_id': user.id, 'iat': int(time.time()), 'exp': int(time.time()) + JWT_DURATION_SEC}, 
                                 JWT_SECRET_KEY, 
                                 JWT_ALGORITHM)
 
-            return JsonResponse({"result": "SUCCESS", "token": new_token}, status=200)
+            return JsonResponse({"status": "SUCCESS", "token": new_token}, status=200)
 
         except JSONDecodeError as e:
-            return JsonResponse({"result": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
+            return JsonResponse({"status": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
         
         except jwt.exceptions.ExpiredSignatureError as e:
-            return JsonResponse({"result": "TOKEN_ERROR", "message": e.args[0]})
+            return JsonResponse({"status": "TOKEN_ERROR", "message": e.args[0]})
         
         except jwt.exceptions.InvalidSignatureError as e:
-            return JsonResponse({"result": "TOKEN_ERROR", "message": e.args[0]})
+            return JsonResponse({"status": "TOKEN_ERROR", "message": e.args[0]})
         
         except jwt.exceptions.DecodeError as e:
-            return JsonResponse({"result": "TOKEN_ERROR", "message": e.args[0]})
+            return JsonResponse({"status": "TOKEN_ERROR", "message": e.args[0]})
 
         except KeyError as e:
-            return JsonResponse({"result": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
+            return JsonResponse({"status": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
         
         except User.DoesNotExist:
-            return JsonResponse({"result": "INVALID_USER"}, status=401)
+            return JsonResponse({"status": "INVALID_USER"}, status=401)
