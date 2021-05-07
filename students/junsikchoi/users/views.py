@@ -54,21 +54,15 @@ class SignInView(View):
     def post(self, request):
         
         try:
-            if request.headers.get('Authorization'):
-                token = request.headers.get('Authorization')
-                payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
-                user = User.objects.get(pk=payload.get('user_id'))
-            
-            else:
-                data = json.loads(request.body)
+            data = json.loads(request.body)
 
-                email = data['email']
-                password = data['password']
+            email = data['email']
+            password = data['password']
 
-                user = User.objects.get(email=email)
+            user = User.objects.get(email=email)
 
-                if not bcrypt.checkpw(str(data.get('password')).encode('utf-8'),user.password.encode('utf-8')):
-                    return JsonResponse({"status": "INVALID_USER"}, status=401)
+            if not bcrypt.checkpw(str(data.get('password')).encode('utf-8'),user.password.encode('utf-8')):
+                return JsonResponse({"status": "INVALID_USER"}, status=401)
 
             new_token = jwt.encode({'user_id': user.id, 'iat': int(time.time()), 'exp': int(time.time()) + JWT_DURATION_SEC}, 
                                 JWT_SECRET_KEY, 
@@ -78,15 +72,6 @@ class SignInView(View):
 
         except JSONDecodeError as e:
             return JsonResponse({"status": "JSON_DECODE_ERROR", "message": e.msg}, status=400)
-        
-        except jwt.exceptions.ExpiredSignatureError as e:
-            return JsonResponse({"status": "TOKEN_ERROR", "message": e.args[0]})
-        
-        except jwt.exceptions.InvalidSignatureError as e:
-            return JsonResponse({"status": "TOKEN_ERROR", "message": e.args[0]})
-        
-        except jwt.exceptions.DecodeError as e:
-            return JsonResponse({"status": "TOKEN_ERROR", "message": e.args[0]})
 
         except KeyError as e:
             return JsonResponse({"status": "KEY_ERROR", "message": f'Key Error in Field "{e.args[0]}"'}, status=400)
