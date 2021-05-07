@@ -8,7 +8,6 @@ from users.models import User
 class SignUpView(View): 
     def post(self, request):
         data  = json.loads(request.body)
-        nickname = data.get('nickname')
 
         if 'password' not in data.keys() or 'email' not in data.keys():
             return JsonResponse({"MESSAGE": "KEY ERROR"}, status=400)
@@ -38,3 +37,18 @@ class SignUpView(View):
             phone    = data.get('phone')
         )
         return JsonResponse({'MESSAGE':'SIGNUP SUCCESS'}, status=201)
+
+class SignInView(View): 
+    def post(self, request):
+        data  = json.loads(request.body)
+
+        if 'email' not in data.keys() or 'password' not in data.keys():
+            return JsonResponse({"MESSAGE": "KEY ERROR"}, status=400)
+
+        if not User.objects.filter(email=data['email']).exists():
+            return JsonResponse({"MESSAGE": "INVALID USER"}, status=401)
+
+        if data['password'] != User.objects.get(email=data['email']).password:
+            return JsonResponse({"MESSAGE": "INVALID USER"}, status=401)
+        
+        return JsonResponse({"MESSAGE": "SUCCESS"}, status=200)
