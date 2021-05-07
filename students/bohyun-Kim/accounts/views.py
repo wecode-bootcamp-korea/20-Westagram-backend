@@ -2,12 +2,18 @@
 
 # Create your views here.
 import json
+<<<<<<< HEAD
 import jwt
+=======
+>>>>>>> e629932b01ab9d3fee4377c9a6a5295bd3b1c16a
 import re
 
 from django.http     import JsonResponse
 from django.views    import View
+<<<<<<< HEAD
 from django.conf     import settings
+=======
+>>>>>>> e629932b01ab9d3fee4377c9a6a5295bd3b1c16a
 from accounts.models import User
 
 class AccountView(View):
