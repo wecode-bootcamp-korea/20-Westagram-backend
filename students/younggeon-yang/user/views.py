@@ -29,10 +29,39 @@ class SignUpView(View):
                 return JsonResponse({'message': 'Already exist'}, status=400)
 
             User.objects.create(email=email, password=password, phone=phone, nickname=nickname)
-            
+
             return JsonResponse({'message': 'SUCCESS'}, status=201)
         except KeyError:
             return JsonResponse({'message': 'No keyword'}, status=400)
         except JSONDecodeError:
             return JsonResponse({'message': 'No body'}, status=400)
 
+class LoginView(View):
+    def post(self, request):
+        try:
+            data     = json.loads(request.body)
+            password = data['password']
+       
+            email    = data.get('email', None)
+            phone    = data.get('phone', None)
+            nickname = data.get('nickname', None)
+
+            if email:
+                password_db = User.objects.filter(email=email).first().password
+            elif phone:
+                password_db = User.objects.filter(phone=phone).first().password
+            elif nickname:
+                password_db = User.objects.filter(nickname=nickname).first().password
+            else:
+                return JsonResponse({'message': 'No account input'}, status=400)
+            
+            if password != password_db:
+                return JsonResponse({'message': 'Wrong password'}, status=401)
+
+            return JsonResponse({'message': 'SUCCESS'}, status=200)
+        except KeyError:
+            return JsonResponse({'message': 'No keyword'}, status=400)
+        except JSONDecodeError:
+            return JsonResponse({'message': 'No body'}, status=400)
+        except AttributeError:
+            return JsonResponse({'message': 'No account name'}, status=401)
