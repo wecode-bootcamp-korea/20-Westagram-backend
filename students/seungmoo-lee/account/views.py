@@ -48,3 +48,29 @@ class SignUpView(View):
 
         except JSONDecodeError:
             return JsonResponse({'message': 'EMPTY_ARGS_ERROR'}, status=400)
+
+class SignInView(View):
+    def post(self, request):
+        userValidation = UserValidation()
+
+        try:
+            data       = json.loads(request.body)
+            account_id = data.get('account_id')
+            password   = data.get('password')
+
+            if userValidation.check_required_fields(account_id, password):
+                return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+
+            user = User.objects.filter((
+                Q(email=account_id) |
+                Q(phone_number=account_id) |
+                Q(nickname=account_id)) &
+                Q(password=password))
+
+            if not user.exists():
+                return JsonResponse({'message': 'INVALID_USER'}, status=401)
+
+            return JsonResponse({'message': 'SUCCESS'}, status=200)
+
+        except JSONDecodeError:
+            return JsonResponse({'message': 'EMPTY_ARGS_ERROR'}, status=400)
