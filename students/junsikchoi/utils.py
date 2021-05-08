@@ -4,6 +4,9 @@ class DuplicatedEntryError(Exception):
         super().__init__()
         self.err_message = f'Entry {duplicated_field} is duplicated.'
 
+class AuthenticationError(Exception):
+    pass
+
 def check_duplicate(model, data):
     non_duplicatable_fields = [
         _.attname
